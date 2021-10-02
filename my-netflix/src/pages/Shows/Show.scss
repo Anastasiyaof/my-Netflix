@@ -1,0 +1,12 @@
+.shows-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	padding: 20px 0;
+	.show {
+		width: 200px;
+		height: 200px;
+		background: red;
+		margin: 20px 10px;
+	}
+}
