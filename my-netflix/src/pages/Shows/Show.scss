@@ -1,12 +1,26 @@
-.shows-wrap {
+/* .shows-wrap {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
 	padding: 20px 0;
 	.show {
-		width: 200px;
+		width: 300px;
 		height: 200px;
-		background: red;
 		margin: 20px 10px;
+	}
+} */
+.shows-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 20px 0;
+	.show {
+		width: 100px;
+		height: fit-content;
+		margin: 20px 0px;
+		background: black;
+		&:hover {
+			z-index: 10;
+			width: 300px;
+		}
 	}
 }

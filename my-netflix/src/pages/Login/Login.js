@@ -8,7 +8,6 @@ import { Button } from '../../components/UI/Button/Button';
 
 export default function Login(props) {
 	const { setToken } = useAuth();
-
 	const [formControls, setFormControls] = useState({
 		email: {
 			value: '',
