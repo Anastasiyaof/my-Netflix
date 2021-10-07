@@ -1,26 +1,38 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ShowList } from '../../components/ShowList/ShowList';
 import { TVapiContext } from '../../context/tvapi/TVapiContext';
+import Loader from '../../components/UI/Loader/Loader';
+import { genres, types } from '../consts';
 import './Show.scss';
+import { FirebaseContext } from '../../context/firebase/FirebaseContext';
 
 export default function Shows() {
-	const [page, setPage] = useState(1);
+	const [page] = useState(1);
 	const [top, setTop] = useState([]);
 	const [suggestions, setSuggestions] = useState([]);
-	const { getShows, shows, loading } = useContext(TVapiContext);
+	const [filters, setFilters] = useState({
+		genre: [],
+		type: '',
+		sort: '',
+	});
+	const { getShows, filterBy, shows, filteredShows } = useContext(TVapiContext);
 
-	/* useMemo(() => {
-		console.log('useMemo');
-		return getShows();
-	}, [page]); */
+	const { getFavorites } = useContext(FirebaseContext);
 
-	useEffect(() => getShows(), [page]);
+	useEffect(() => {
+		const get = async () => await getShows();
+		get();
+	}, [page]);
+	useEffect(() => {
+		const get = async () => await getFavorites();
+		get();
+	}, [page]);
 	useEffect(() => setTop(getTop()), [shows]);
 	useEffect(() => setSuggestions(getSuggestions()), [shows]);
-	console.log(shows);
+	useEffect(() => filterBy(filters), [filters]);
 
 	function getTop() {
-		return shows
+		return [...shows]
 			.sort((item1, item2) => item2.rating - item1.rating)
 			.slice(0, 10);
 	}
@@ -40,37 +52,90 @@ export default function Shows() {
 		}
 		return numbers.map((item, index) => shows[index]);
 	}
+
+	const filterHandler = ({ target }) => {
+		const by = target.name;
+		const clone = { ...filters };
+		if (by === 'sort' || by === 'type') {
+			clone[by] = target.value;
+		} else if (target.checked) {
+			clone[by].push(target.value);
+		} else {
+			clone[by] = clone[by].filter(item => item !== target.value);
+		}
+		setFilters(clone);
+	};
+
 	return (
 		<>
-			{!loading > 0 ? (
+			{top.length === 0 || suggestions.length === 0 ? (
+				<Loader />
+			) : (
 				<>
 					<h2>Top 10</h2>
-					<div className={'shows-wrap'}>
-						{console.log(top)}
-						{console.log(suggestions)}
-
-						<ShowList className={'show'} arr={top} />
+					<div className={'list-wrap'}>
+						<ShowList className={'show-item'} arr={top} />
 					</div>
 					{top.length > 0 ? (
 						<>
 							<h2>Suggestions</h2>
-							<div className={'shows-wrap'}>
-								<ShowList className={'show'} arr={suggestions} />
+							<div className={'list-wrap'}>
+								<ShowList className={'show-item'} arr={suggestions} />
 							</div>
 						</>
 					) : null}
 
-					<h1>Shows</h1>
-					<div className={'shows-wrap'}>
-						{shows.map((show, index) => (
-							<div className={'show'} key={index}>
-								<img src={show.image.medium} alt={show.name} />
+					<div className='block'>
+						<h1>Shows</h1>
+						<form className={'filter'} onChange={e => filterHandler(e)}>
+							<h4>Genres</h4>
+							<div className={'genre field'}>
+								{genres.map((genre, index) => {
+									return (
+										<label key={index}>
+											<input type='checkbox' value={genre} name='genre' />
+											{genre}
+										</label>
+									);
+								})}
 							</div>
-						))}
+							<div className={'filter-part'}>
+								<h4>Type</h4>
+								<div className={'type field'}>
+									{types.map((type, index) => {
+										return (
+											<label key={index}>
+												<input type='radio' value={type} name='type' />
+												{type}
+											</label>
+										);
+									})}
+								</div>
+							</div>
+							<div className={'filter-part'}>
+								<h4>Sort</h4>
+								<div className={'sort field'}>
+									<label>
+										<input type='radio' value={'highest'} name='sort' />
+										Highest rating
+									</label>
+									<label>
+										<input type='radio' value={'lowest'} name='sort' />
+										Lowest rating
+									</label>
+								</div>
+							</div>
+						</form>
+						<div className={'shows-wrap'}>
+							<ShowList
+								className={'show-card'}
+								arr={filteredShows}
+								card={true}
+							/>
+						</div>
 					</div>
-					<button onClick={() => setPage(2)}>Next</button>
 				</>
-			) : null}
+			)}
 		</>
 	);
 }

@@ -1,5 +1,5 @@
-import Favorites from './pages/Favorites';
-import Friends from './pages/Friends';
+import Favorites from './pages/Favorites/Favorites';
+import Friends from './pages/Friends/Friends';
 import Login from './pages/Login/Login';
 import Shows from './pages/Shows/Shows';
 import {

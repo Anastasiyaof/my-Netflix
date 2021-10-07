@@ -1,11 +1,19 @@
-import { GET_SHOWS, SET_LOADING } from '../types';
+import { SET_SHOWS, SET_LOADING, SET_FILTERED } from '../types';
 
 const handlers = {
-	[GET_SHOWS]: (state, action) => ({
+	[SET_SHOWS]: (state, action) => ({
 		...state,
 		shows: action.payload,
+		filteredShows: action.payload,
 		loading: false,
 	}),
+	[SET_FILTERED]: (state, action) => {
+		return {
+			...state,
+			filteredShows: action.payload,
+			loading: false,
+		};
+	},
 	[SET_LOADING]: state => ({
 		...state,
 		loading: true,

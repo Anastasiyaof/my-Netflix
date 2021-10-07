@@ -33,6 +33,8 @@ export default function Login(props) {
 		},
 	});
 
+	const [err, setErr] = useState(false);
+
 	function onChangeHandler(event, controlName) {
 		const controls = { ...formControls };
 		const control = { ...controls[controlName] };
@@ -93,7 +95,8 @@ export default function Login(props) {
 			);
 			setToken(response.data);
 		} catch (e) {
-			console.log(e);
+			setErr(true);
+			setTimeout(() => setErr(false), 4000);
 		}
 	}
 
@@ -103,6 +106,7 @@ export default function Login(props) {
 				<h1>LOGIN</h1>
 				<form>
 					{renderInputs()}
+					{err ? <span className='err'>Wrong email or password</span> : null}
 					<Button
 						onClick={event => onSubmitHandler(event)}
 						type='submit'

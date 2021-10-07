@@ -17,7 +17,6 @@ export const reducer = (state, action) => {
 
 const isAuth = () => {
 	const expDate = localStorage.getItem('firebaseExpToken');
-	console.log(expDate);
 
 	if (new Date(expDate) < new Date() || expDate === null) {
 		return false;

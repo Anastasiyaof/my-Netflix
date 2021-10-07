@@ -6,10 +6,8 @@ import { useAuth } from './AuthContext';
 
 export const AppRouter = () => {
 	const { isAuth } = useAuth();
-	console.log(isAuth);
 	return (
 		<Switch>
-			{console.log(isAuth)}
 			{isAuth
 				? authRoutes.map(({ path, Component }) => (
 						<Route key={path} path={path} component={Component} exact />
